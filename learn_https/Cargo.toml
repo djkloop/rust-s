@@ -1,0 +1,13 @@
+[package]
+name = "learn_https"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+hyper = { version = "0.14", features = ["full"] }
+tokio = { version = "1.15.0", features = ["full"] }
+hyper-rustls = "0.23.0"
+futures-util = "0.3.19"
+anyhow = "1.0.52"
