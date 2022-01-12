@@ -9,6 +9,7 @@ use chrono::Utc;
 
 use argon2::Config;
 use dotenv::dotenv;
+use serde::Serialize;
 use serde_json::json;
 use sqlx::{query, query_as, PgPool, Pool};
 use tide::{Body, Request, Response, Server, StatusCode};
@@ -25,6 +26,12 @@ async fn make_db_pool() -> PgPool {
 #[derive(Debug, Clone)]
 struct State {
     db_pool: PgPool,
+}
+
+#[derive(Debug, Serialize)]
+struct ResultMessage {
+    token: String,
+    message: String
 }
 
 async fn server() -> tide::Result<Server<State>> {
@@ -77,6 +84,35 @@ async fn server() -> tide::Result<Server<State>> {
             }))?);
             Ok(res)
         });
+    // 登陆接口
+    app.at("login").post(|mut req: Request<State>| async move {
+        let db_share_pool = req.state().db_pool.clone();
+        let login_user = req.body_json::<entity::user::LoginUser>().await?;
+        let hashed_password = query_as!(
+            entity::user::Password,
+            "select hashed_password from users where username=$1",
+            login_user.username
+        )
+        .fetch_one(&db_share_pool)
+        .await?;
+        let mut res_json = ResultMessage{
+            token: "".to_string(),
+            message : "登陆失败".to_string()
+        };
+
+        if argon2::verify_encoded(
+            &hashed_password.hashed_password,
+            login_user.password.as_bytes(),
+        )
+        .unwrap()
+        {
+            res_json.token = "todo token".to_string();
+            res_json.message = "登陆成功".to_string();
+        }
+        let mut res = Response::new(StatusCode::Ok);
+        res.set_body(Body::from_json(&json!(res_json))?);
+        Ok(res)
+    });
     Ok(app)
 }
 
