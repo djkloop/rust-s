@@ -1,0 +1,15 @@
+[package]
+name = "learn_sqlx_lib_login"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+tide = "0.16.0"
+async-std = { version = "1.10.0", features = ["attributes"] }
+serde = { version = "1.0", features = ["derive"] }
+sqlx = {version="0.5.10",features=["runtime-async-std-rustls","macros","chrono","json","postgres","uuid"] }
+tide-sqlx = "0.6.1"
+serde_json = "1.0.74"
+dotenv = "0.15.0"
+log = "0.4.14"
+tide-fluent-routes = "0.1.5"
