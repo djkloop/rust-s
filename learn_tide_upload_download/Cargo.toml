@@ -1,0 +1,13 @@
+[package]
+name = "learn_tide_upload_download"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+tide = "0.16.0"
+tide-fluent-routes = "0.1.5"
+tempfile = "3.3.0"
+
+[dependencies.async-std]
+version = "1.10.0"
+features = ["attributes"]
